@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {concat, fromEvent, interval, noop, observable, Observable, of, timer, merge, Subject, BehaviorSubject} from 'rxjs';
+import { Subject, BehaviorSubject, AsyncSubject, ReplaySubject } from 'rxjs';
 import {delayWhen, filter, map, take, timeout} from 'rxjs/operators';
 import {createHttpObservable} from '../common/util';
 
@@ -13,11 +13,11 @@ export class AboutComponent implements OnInit {
 
     ngOnInit() {
 
-        const subject = new BehaviorSubject(0);
+        const subject = new ReplaySubject();
 
-        const series1$ = subject.asObservable();
+        const series$ = subject.asObservable();
 
-        series1$.subscribe(val => console.log('early sub:', val));
+        series$.subscribe(val => console.log('first sub:', val));
 
         subject.next(1);
         subject.next(2);
@@ -26,11 +26,7 @@ export class AboutComponent implements OnInit {
         // subject.complete();
 
         setTimeout(() => {
-
-            series1$.subscribe(val => console.log('late sub:', val));
-
-            subject.next(4);
-
+            series$.subscribe(val => console.log('second sub:', val));
         }, 3000);
 
     }
